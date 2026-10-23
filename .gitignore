@@ -1,0 +1,41 @@
+# Secrets / local environment
+.env
+.env.*
+!.env.example
+backend/.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+frontend/dist/
+frontend/coverage/
+*.tsbuildinfo
+
+# Runtime logs
+*.log
+backend/uvicorn*.log
+
+# Raw downloads are reproducible and can be large; the validated extract is kept.
+data/raw/*
+!data/raw/.gitkeep
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Env-specific Vercel metadata
+.vercel

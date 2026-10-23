@@ -1,0 +1,51 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    image: windscope-api:local
+    environment:
+      ENVIRONMENT: production
+      LOG_LEVEL: INFO
+      # Requests arrive through the nginx proxy, so CORS is only needed for
+      # direct local browser calls to :8000.
+      CORS_ORIGINS: http://localhost:8080,http://127.0.0.1:8080,http://localhost:5173,http://127.0.0.1:5173
+      CUTOFF_MODE: previous_day
+      CUTOFF_LOCAL_TIME: "00:00"
+      FORECAST_TIMEZONE: Europe/London
+      MAPE_MIN_ACTUAL_MW: "100"
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health', timeout=3).status == 200 else 1)",
+        ]
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+
+  web:
+    build:
+      context: ./frontend
+      args:
+        # Same-origin requests: nginx proxies /api to the api service.
+        VITE_API_BASE_URL: ""
+    image: windscope-web:local
+    ports:
+      - "8080:8080"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/healthz"]
+      interval: 30s
+      timeout: 4s
+      start_period: 10s
+      retries: 3
