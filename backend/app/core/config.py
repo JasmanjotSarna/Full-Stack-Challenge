@@ -144,7 +144,13 @@ class Settings:
     def resolved_data_dir(self) -> Path:
         if self.data_dir is not None:
             return self.data_dir
-        candidates = [REPO_ROOT / "data" / "processed", Path("/app/data/processed")]
+        candidates = [
+            REPO_ROOT / "data" / "processed",
+            Path(__file__).resolve().parents[2] / "data" / "processed",
+            Path.cwd() / "data" / "processed",
+            Path.cwd().parent / "data" / "processed",
+            Path("/app/data/processed"),
+        ]
         for candidate in candidates:
             if candidate.exists():
                 return candidate

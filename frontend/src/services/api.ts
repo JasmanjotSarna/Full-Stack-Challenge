@@ -9,7 +9,7 @@ import type {
   VintagesResponse,
 } from "../types/api";
 
-const RAW_BASE = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000";
+const RAW_BASE = import.meta.env.VITE_API_BASE_URL ?? "";
 export const API_BASE = RAW_BASE.replace(/\/+$/, "");
 
 export class ApiError extends Error {
@@ -45,8 +45,9 @@ async function request<T>(
     });
   } catch (error) {
     if (error instanceof DOMException && error.name === "AbortError") throw error;
+    const endpointDesc = API_BASE ? `at ${API_BASE}` : "(same-origin /api)";
     throw new ApiError(
-      `Cannot reach the WindScope API at ${API_BASE}. Check that the backend is running and VITE_API_BASE_URL is correct.`,
+      `Cannot reach the WindScope API ${endpointDesc}. Check that the backend is running and reachable.`,
       0,
       "network_error",
     );

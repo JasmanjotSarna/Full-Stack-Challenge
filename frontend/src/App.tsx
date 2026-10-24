@@ -18,6 +18,7 @@ import { VintageModal } from "./components/VintageModal";
 import { useDashboardData } from "./hooks/useDashboardData";
 import { useMetadata } from "./hooks/useMetadata";
 import type { Resolution, TimeseriesPoint } from "./types/api";
+import { API_BASE } from "./services/api";
 import { MONTH_END, MONTH_START, type DateRange } from "./utils/derived";
 import { formatDateLong } from "./utils/format";
 
@@ -130,7 +131,7 @@ export default function App() {
           <StatePanel
             title="The WindScope API is unavailable"
             message={dashboard.error}
-            detail={`Expected API base: ${import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000"}`}
+            detail={`Expected API base: ${API_BASE || "(same-origin /api)"}`}
             tone="error"
             actionLabel="Retry"
             onAction={reloadAll}
